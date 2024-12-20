@@ -2,13 +2,11 @@ var express = require('express');
 var router = express.Router();
 var orderSchema = require('../models/order.model');
 const productSchema = require('../models/product.model');
-const multer = require('multer');
 
 router.get('/', async function(req, res, next) {
         let orders = await orderSchema.find({});
   res.send(orders);
 });
-
 router.get('/:id', async function(req, res, next) {
   try {
     let { id } = req.params;
@@ -38,12 +36,12 @@ router.get('/:id', async function(req, res, next) {
     let { order_id, name, products } = req.body;
 
     if (!order_id) {
-      let lastOrder = await orderSchema.findOne().sort({ createdAt: -1 }); // Get the last order based on creation time
+      let lastOrder = await orderSchema.findOne().sort({ createdAt: -1 }); 
       if (lastOrder && lastOrder.order_id) {
-        let lastOrderId = parseInt(lastOrder.order_id.substring(3)); // Extract numeric part
-        order_id = `ORD${(lastOrderId + 1).toString().padStart(3, '0')}`; // Increment and format
+        let lastOrderId = parseInt(lastOrder.order_id.substring(3));
+        order_id = `ORD${(lastOrderId + 1).toString().padStart(3, '0')}`;
       } else {
-        order_id = 'ORD001'; // Default for the first order
+        order_id = 'ORD001'; 
       }
     }
     
