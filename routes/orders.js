@@ -7,6 +7,7 @@ router.get("/", async function (req, res, next) {
   let orders = await orderSchema.find({});
   res.send(orders);
 });
+
 router.get("/:id", async function (req, res, next) {
   try {
     let { id } = req.params;

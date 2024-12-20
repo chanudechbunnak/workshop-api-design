@@ -29,10 +29,10 @@ router.get("/:id", async function (req, res, next) {
     if (product) {
       res.status(200).send(product);
     } else {
-      res.status(404).send({ error: "User not found" });
+      res.status(404).send({ error: "Product not found" });
     }
   } catch (error) {
-    res.status(500).send({ error: "Error fetching user by ID" });
+    res.status(500).send({ error: "Error fetching Product by ID" });
   }
 });
 
