@@ -37,28 +37,44 @@ router.get("/:id", async function (req, res, next) {
 });
 
 router.post("/", upload.single("image"), async function (req, res, next) {
-  let { product_id, product_name, detail, price, stock } = req.body;
-  let product = new productSchema({
-    product_id: product_id,
-    product_name: product_name,
-    detail: detail,
-    price: price,
-    stock: stock,
-  });
+  try {
+    let latestProduct = await productSchema.findOne().sort({ product_id: -1 });
+    let newProductId = "PD001";
+    if (latestProduct && latestProduct.product_id) {
+      let currentId = parseInt(latestProduct.product_id.substring(2));
+      newProductId = "PD" + String(currentId + 1).padStart(3, "0"); 
+    }
 
-  // let token = await jwt.sign({foo: "bar"}, "2001")
-  await product.save();
-  res.send(product);
+    let { product_name, detail, price, stock } = req.body;
+    let product = new productSchema({
+      product_id: newProductId,
+      product_name: product_name,
+      detail: detail,
+      price: price,
+      stock: stock,
+    });
+
+    await product.save();
+    res.status(201).send(product);
+  } catch (error) {
+    res.status(500).send({ error: "Error creating product" });
+  }
 });
 
-router.put("/:id", async function (req, res, next) {
+router.put("/:id", upload.single("image"), async function (req, res, next) {
   try {
     let { id } = req.params;
     let { product_id, product_name, detail, price, stock } = req.body;
 
     let product = await productSchema.findByIdAndUpdate(
       id,
-      { product_id, product_name, detail, price, stock },
+      { 
+        product_id: product_id, 
+        image: req.file.filename,
+        product_name: product_name, 
+        detail: detail, 
+        price: price, 
+        stock: stock },
       { new: true }
     );
 
